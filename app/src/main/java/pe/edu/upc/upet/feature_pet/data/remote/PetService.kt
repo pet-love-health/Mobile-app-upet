@@ -1,5 +1,6 @@
 package pe.edu.upc.upet.feature_pet.data.remote
 
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -23,4 +24,7 @@ interface PetService {
 
     @DELETE("pets/{pet_id}")
     fun deletePet(@Path("pet_id") pet_Id: Int): Call<Unit>
+
+    @GET("api/v1/pets/{petId}/medical-report")
+    fun downloadMedicalReport(@Path("petId") petId: Int): Call<ResponseBody>
 }

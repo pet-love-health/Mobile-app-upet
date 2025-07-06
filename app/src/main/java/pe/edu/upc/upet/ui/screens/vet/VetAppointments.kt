@@ -44,23 +44,31 @@ import pe.edu.upc.upet.ui.theme.BorderPadding
 fun VetAppointments(navController: NavController) {
     var upcomingAppointments by remember { mutableStateOf(listOf<Appointment>()) }
     var pastAppointments by remember { mutableStateOf(listOf<Appointment>()) }
-    var showUpcoming by remember { mutableStateOf(true) } // This is already set to true
+    var cancelledAppointments by remember { mutableStateOf(listOf<Appointment>()) }
+    var showUpcoming by remember { mutableStateOf(1) } // This is already set to true
 
     val vet = getVet() ?: return
 
     LaunchedEffect(vet.id) {
-        AppointmentRepository().getUpcomingAppointmentsByVeterinarianId(1) { upcomingVetAppointments ->
+        AppointmentRepository().getUpcomingAppointmentsByVeterinarianId(vet.id) { upcomingVetAppointments ->
             Log.d("UpcomingVetAppointments", upcomingVetAppointments.toString())
             upcomingAppointments = upcomingVetAppointments
         }
-        AppointmentRepository().getPastAppointmentsByVeterinarianId(1) { pastVetAppointments ->
+        AppointmentRepository().getPastAppointmentsByVeterinarianId(vet.id) { pastVetAppointments ->
             Log.d("PastVetAppointments", pastVetAppointments.toString())
 
             pastAppointments = pastVetAppointments
         }
-    }
+        AppointmentRepository().getCancelledAppointmentsByVeterinarianId(vet.id) { cancelledVetAppointments ->
+            Log.d("CancelledVetAppointments", cancelledVetAppointments.toString())
 
-    val appointments = if (showUpcoming) upcomingAppointments else pastAppointments
+            cancelledAppointments = cancelledVetAppointments
+        }
+    }
+    val appointments : List<Appointment>;
+    if (showUpcoming == 1) {appointments = upcomingAppointments}
+    else if (showUpcoming == 2) {appointments = pastAppointments}
+    else { appointments = cancelledAppointments }
 
     Scaffold(
         topBar = { TopBar(navController = navController, title = "My Appointments") },

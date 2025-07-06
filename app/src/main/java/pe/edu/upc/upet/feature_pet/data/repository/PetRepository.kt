@@ -1,5 +1,7 @@
 package pe.edu.upc.upet.feature_pet.data.repository
 
+import androidx.compose.runtime.Composable
+import okhttp3.ResponseBody
 import pe.edu.upc.upet.feature_pet.data.mapper.toDomainModel
 import pe.edu.upc.upet.feature_pet.data.remote.PetRequest
 import pe.edu.upc.upet.feature_pet.data.remote.PetResponse
@@ -94,4 +96,20 @@ class PetRepository(private val petService: PetService = PetServiceFactory.getPe
             }
         })
     }
+
+    /*fun downloadMedicalReport(petId: Int, callback : @Composable (String?) -> Unit) {
+        petService.downloadMedicalReport(petId).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    callback("https://web-production-4270c.up.railway.app/api/v1/pets/$petId/medical-report")
+                } else {
+                    callback(null)
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                callback(null)
+            }
+        })
+    }*/
 }

@@ -8,6 +8,7 @@ import pe.edu.upc.upet.feature_appointment.data.remote.AppointmentService
 import pe.edu.upc.upet.feature_appointment.data.remote.AppointmentServiceFactory
 import pe.edu.upc.upet.feature_appointment.data.remote.AppointmentUpdateRequest
 import pe.edu.upc.upet.feature_appointment.domain.Appointment
+import pe.edu.upc.upet.feature_vet.data.remote.VetResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -165,6 +166,23 @@ class AppointmentRepository(
         })
     }
 
+    fun getCancelledAppointmentsByOwnerId(ownerId: Int, callback: (List<Appointment>) -> Unit) {
+        appointmentService.getCancelledAppointmentsByOwnerId(ownerId).enqueue(object :
+            Callback<List<AppointmentResponse>> {
+            override fun onResponse(call: Call<List<AppointmentResponse>>, response: Response<List<AppointmentResponse>>) {
+                if (response.isSuccessful) {
+                    val appointments = response.body()?.map { it.toDomainModel() }
+                    callback(appointments ?: emptyList())
+                } else {
+                    callback(emptyList())
+                }
+            }
+            override fun onFailure(call: Call<List<AppointmentResponse>>, t: Throwable) {
+                callback(emptyList())
+            }
+        })
+    }
+
     fun getUpcomingAppointmentsByVeterinarianId(veterinarianId: Int, callback: (List<Appointment>) -> Unit) {
         appointmentService.getUpcomingAppointmentsByVeterinarianId(veterinarianId).enqueue(object :
             Callback<List<AppointmentResponse>> {
@@ -197,6 +215,39 @@ class AppointmentRepository(
             }
             override fun onFailure(call: Call<List<AppointmentResponse>>, t: Throwable) {
                 callback(emptyList())
+            }
+        })
+    }
+
+    fun getCancelledAppointmentsByVeterinarianId(veterinarianId: Int, callback: (List<Appointment>) -> Unit) {
+        appointmentService.getCancelledAppointmentsByVeterinarianId(veterinarianId).enqueue(object :
+            Callback<List<AppointmentResponse>> {
+            override fun onResponse(call: Call<List<AppointmentResponse>>, response: Response<List<AppointmentResponse>>) {
+                if (response.isSuccessful) {
+                    val appointments = response.body()?.map { it.toDomainModel() }
+                    callback(appointments ?: emptyList())
+                } else {
+                    callback(emptyList())
+                }
+            }
+            override fun onFailure(call: Call<List<AppointmentResponse>>, t: Throwable) {
+                callback(emptyList())
+            }
+        })
+    }
+
+    fun cancelAppointment(appointmentId: Int, appointment: AppointmentUpdateRequest, callback: (Boolean) -> Unit) {
+        appointmentService.cancelAppointment(appointmentId, appointment).enqueue(object :
+            Callback<AppointmentResponse> {
+            override fun onResponse(call: Call<AppointmentResponse>, response: Response<AppointmentResponse>) {
+                if (response.isSuccessful) {
+                    callback(true)
+                } else {
+                    callback(false)
+                }
+            }
+            override fun onFailure(call: Call<AppointmentResponse>, t: Throwable) {
+                callback(false)
             }
         })
     }

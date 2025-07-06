@@ -35,9 +35,18 @@ interface AppointmentService {
     @GET("appointments/owner/{owner_id}/past")
     fun getPastAppointmentsByOwnerId(@Path("owner_id") ownerId: Int): Call<List<AppointmentResponse>>
 
+    @GET("appointments/owner/{owner_id}/cancelled")
+    fun getCancelledAppointmentsByOwnerId(@Path("owner_id") ownerId: Int): Call<List<AppointmentResponse>>
+
     @GET("appointments/veterinarian/{veterinarian_id}/upcoming")
     fun getUpcomingAppointmentsByVeterinarianId(@Path("veterinarian_id") veterinarianId: Int): Call<List<AppointmentResponse>>
 
     @GET("appointments/veterinarian/{veterinarian_id}/past")
     fun getPastAppointmentsByVeterinarianId(@Path("veterinarian_id") veterinarianId: Int): Call<List<AppointmentResponse>>
+
+    @GET("appointments/veterinarian/{veterinarian_id}/cancelled")
+    fun getCancelledAppointmentsByVeterinarianId(@Path("veterinarian_id") veterinarianId: Int): Call<List<AppointmentResponse>>
+
+    @PUT("appointments/{appointment_id}/cancel")
+    fun cancelAppointment(@Path("appointment_id") appointmentId: Int, @Body appointmentUpdateRequest: AppointmentUpdateRequest): Call<AppointmentResponse>
 }

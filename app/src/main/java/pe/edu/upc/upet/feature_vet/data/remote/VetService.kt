@@ -39,8 +39,7 @@ interface VetService {
 
     @POST("veterinarians/{vet_id}/available_times")
     fun getAvailableTimes(
-        @Query("clinic_id") clinicId: Int,
+        @Path("vet_id") vetId: Int,
         @Body timeRequest: AvailableTimesRequest
     ): Call<AvailableTimesResponse>
-
 }

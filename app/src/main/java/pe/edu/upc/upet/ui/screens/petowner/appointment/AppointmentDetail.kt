@@ -1,6 +1,7 @@
 package pe.edu.upc.upet.ui.screens.petowner.appointment
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
+import pe.edu.upc.upet.feature_appointment.data.remote.AppointmentUpdateRequest
 import pe.edu.upc.upet.feature_appointment.data.repository.AppointmentRepository
 import pe.edu.upc.upet.feature_appointment.domain.Appointment
 import pe.edu.upc.upet.feature_pet.data.repository.PetRepository
@@ -55,6 +57,7 @@ import pe.edu.upc.upet.navigation.Routes
 import pe.edu.upc.upet.ui.screens.petowner.getRole
 import pe.edu.upc.upet.ui.screens.petowner.vetclinic.capitalizeFirstLetter
 import pe.edu.upc.upet.ui.shared.CustomButton
+import pe.edu.upc.upet.ui.shared.SuccessDialog
 import pe.edu.upc.upet.ui.shared.TextSubtitle2
 import pe.edu.upc.upet.ui.shared.TopBar
 import pe.edu.upc.upet.ui.shared.getAge
@@ -74,7 +77,16 @@ fun AppointmentDetail(navController: NavController, appointmentId: Int) {
     var vet by remember { mutableStateOf<Vet?>(null) }
     var pet by remember { mutableStateOf<Pet?>(null) }
     var ownerPet by remember { mutableStateOf<PetOwner?>(null) }
+    val showSuccessDialog = remember { mutableStateOf(false) }
 
+    if (showSuccessDialog.value) {
+        SuccessDialog(onDismissRequest = {
+            showSuccessDialog.value = false
+            navController.navigate(Routes.AppointmentList.route)
+        }, titleText = "Appointment Cancelled",
+            messageText = "Your appointment has been cancelled successfully.",
+            buttonText = "OK")
+    }
     LaunchedEffect(key1 = appointmentId) {
         AppointmentRepository().getAppointmentById(appointmentId) {
             appointment = it
@@ -154,6 +166,20 @@ fun AppointmentDetail(navController: NavController, appointmentId: Int) {
                 TextSubtitle2("Veterinary Information")
 
                 VetInformation(vet!!, navController)
+            }
+            CustomButton(text = "Complete") {
+                navController.navigate(Routes.CompleteAppointment.createRoute(appointmentId))
+            }
+            CustomButton(text = "Cancel") {
+                val appointment = AppointmentUpdateRequest(
+                    diagnosis = "Cancelled",
+                    treatment = "Cancelled"
+                )
+
+                AppointmentRepository().cancelAppointment(appointmentId,appointment){
+                    if (it) showSuccessDialog.value = true
+                    else Log.d("AppointmentCancelScreen", "Error cancelling appointment")
+                }
             }
         }
     }

@@ -33,7 +33,6 @@ fun CustomButton(text: String, icon: ImageVector? = null, onClick: () -> Unit, )
     }
 }
 
-
 @Composable
 fun CustomButton2(
     text: String,

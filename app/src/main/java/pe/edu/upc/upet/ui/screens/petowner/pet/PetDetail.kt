@@ -88,6 +88,7 @@ import pe.edu.upc.upet.ui.theme.Pink
 import pe.edu.upc.upet.ui.theme.poppinsFamily
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -248,7 +249,7 @@ fun PetDetail(navController: NavHostController, petId: Int) {
                                 }
                             }
 
-                            Row(
+                            /*Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
@@ -298,7 +299,7 @@ fun PetDetail(navController: NavHostController, petId: Int) {
                                         )
                                     }
                                 }
-                            }
+                            }*/
 
                             Text(
                                 text = "More details",
@@ -318,7 +319,7 @@ fun PetDetail(navController: NavHostController, petId: Int) {
                                     )
                                 }
                             } else {
-                                CustomButton2(
+                                /*CustomButton2(
                                     text = if (isTracking) "Stop tracking" else "Start tracking",
                                     color = if (isTracking) Color.Red else Blue1,
                                     onClick = {
@@ -341,7 +342,7 @@ fun PetDetail(navController: NavHostController, petId: Int) {
                                             showDialog = true
                                         }
                                     }
-                                )
+                                )*/
                                 if (showDialog) {
                                     TrackingDialog(
                                         onDismiss = { showDialog = false },
@@ -395,6 +396,13 @@ fun PetDetail(navController: NavHostController, petId: Int) {
 
                                 CustomButton(text = "Add Medical Information") {
                                     navController.navigate(Routes.AddReport.createRoute(petValue.id))
+                                }
+                                CustomButton(text = "Medical History") {
+                                    navController.navigate(
+                                        Routes.petMedicalHistory.createRoute(
+                                            petValue.id
+                                        )
+                                    )
                                 }
                             }
                         }

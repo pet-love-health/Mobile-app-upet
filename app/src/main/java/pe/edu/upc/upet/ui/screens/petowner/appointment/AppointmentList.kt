@@ -1,4 +1,4 @@
-package pe.edu.upc.upet.ui.screens.petowner.appointment
+    package pe.edu.upc.upet.ui.screens.petowner.appointment
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -64,7 +64,8 @@ import java.util.Locale
 fun AppointmentList(navController: NavController) {
     var upcomingAppointments by remember { mutableStateOf(listOf<Appointment>()) }
     var pastAppointments by remember { mutableStateOf(listOf<Appointment>()) }
-    var showUpcoming by remember { mutableStateOf(true) }
+    var cancelledAppointments by remember { mutableStateOf(listOf<Appointment>()) }
+    var showUpcoming by remember { mutableStateOf(1) }
 
     val owner = getOwner() ?: return
 
@@ -80,7 +81,17 @@ fun AppointmentList(navController: NavController) {
         }
     }
 
-    val appointments = if (showUpcoming) upcomingAppointments else pastAppointments
+    LaunchedEffect(owner.id) {
+        AppointmentRepository().getCancelledAppointmentsByOwnerId(owner.id) { appointments ->
+            cancelledAppointments = appointments
+        }
+    }
+
+    val appointments : List<Appointment>;
+
+    if (showUpcoming == 1) {appointments = upcomingAppointments}
+    else if (showUpcoming == 2) {appointments = pastAppointments}
+    else { appointments = cancelledAppointments }
 
     Scaffold(
         topBar = { TopBar(navController = navController, title = "My Appointments") },
@@ -101,9 +112,9 @@ fun AppointmentList(navController: NavController) {
 
 @Composable
 fun AppointmentFilterButtons(
-    onShowUpcomingChange: (Boolean) -> Unit
+    onShowUpcomingChange: (Int) -> Unit
 ) {
-    var isUpcomingSelected by remember { mutableStateOf(true) }
+    var isUpcomingSelected by remember { mutableStateOf(1) }
 
     Row(modifier = Modifier
         .fillMaxWidth()
@@ -113,12 +124,12 @@ fun AppointmentFilterButtons(
         Button(
             modifier = Modifier.weight(1f),
             onClick = {
-                onShowUpcomingChange(true)
-                isUpcomingSelected = true
+                onShowUpcomingChange(1)
+                isUpcomingSelected = 1
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (isUpcomingSelected) Pink else Color.White,
-                contentColor = if (isUpcomingSelected) Color.White else Pink,
+                containerColor = if (isUpcomingSelected == 1) Pink else Color.White,
+                contentColor = if (isUpcomingSelected == 1) Color.White else Pink,
             )
         ) {
             Text("Upcoming")
@@ -127,14 +138,27 @@ fun AppointmentFilterButtons(
         Button(
             modifier = Modifier.weight(1f),
             onClick = {
-                onShowUpcomingChange(false)
-                isUpcomingSelected = false
+                onShowUpcomingChange(2)
+                isUpcomingSelected = 2
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (isUpcomingSelected) Color.White else Pink,
-                contentColor = if (isUpcomingSelected) Pink else Color.White, )
+                containerColor = if (isUpcomingSelected == 2) Pink else Color.White,
+                contentColor = if (isUpcomingSelected == 2) Color.White else Pink, )
         ) {
             Text("Past")
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        Button(
+            modifier = Modifier.weight(1f),
+            onClick = {
+                onShowUpcomingChange(3)
+                isUpcomingSelected = 3
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isUpcomingSelected == 3) Pink else Color.White,
+                contentColor = if (isUpcomingSelected == 3) Color.White else Pink,)
+        ) {
+            Text("Cancelled")
         }
     }
 }

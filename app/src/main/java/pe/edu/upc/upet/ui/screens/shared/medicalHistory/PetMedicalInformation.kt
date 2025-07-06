@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -32,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import pe.edu.upc.upet.feature_medicalHistory.data.remote.DiseaseResponse
@@ -40,9 +42,13 @@ import pe.edu.upc.upet.feature_medicalHistory.data.remote.MedicalResultResponse
 import pe.edu.upc.upet.feature_medicalHistory.data.remote.SurgeryResponse
 import pe.edu.upc.upet.feature_medicalHistory.data.remote.VaccineResponse
 import pe.edu.upc.upet.feature_medicalHistory.data.repository.MedicalHistoryRepository
+import pe.edu.upc.upet.feature_pdf.data.remote.PdfService
+import pe.edu.upc.upet.feature_pet.data.repository.PetRepository
 import pe.edu.upc.upet.navigation.Routes
 import pe.edu.upc.upet.ui.screens.petowner.isOwnerAuthenticated
+import pe.edu.upc.upet.ui.shared.CustomButton
 import pe.edu.upc.upet.ui.shared.TopBar
+import pe.edu.upc.upet.ui.theme.Blue1
 import pe.edu.upc.upet.ui.theme.Pink
 
 @Composable
@@ -114,7 +120,7 @@ fun PetMedicalInformation(navController: NavController, petId: Int) {
                         .padding(paddingValues)
                 ) {
                     medicalHistory?.let { history ->
-                        MedicalHistorySection(history)
+                        MedicalHistorySection(history, petId)
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -138,13 +144,20 @@ fun PetMedicalInformation(navController: NavController, petId: Int) {
 }
 
 @Composable
-fun MedicalHistorySection(history: MedicalHistoryResponse) {
+fun MedicalHistorySection(history: MedicalHistoryResponse, petId: Int) {
     Column {
         Text("Medical History", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
         Text("Date: ${history.date}", style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(8.dp))
         Text("Description: ${history.description}", style = MaterialTheme.typography.bodyMedium)
+        val uriHandler = LocalUriHandler.current
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = Blue1),
+            onClick = { uriHandler.openUri("https://web-production-4270c.up.railway.app/api/v1/pets/$petId/medical-report") }) {
+            Text("Download Medical History")
+        }
     }
 }
 

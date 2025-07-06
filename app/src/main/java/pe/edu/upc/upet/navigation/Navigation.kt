@@ -35,6 +35,7 @@ import pe.edu.upc.upet.ui.screens.petowner.OwnerVetProfile
 import pe.edu.upc.upet.ui.screens.petowner.appointment.AppointmentDetail
 import pe.edu.upc.upet.ui.screens.petowner.appointment.AppointmentList
 import pe.edu.upc.upet.ui.screens.petowner.appointment.BookAppointment
+import pe.edu.upc.upet.ui.screens.petowner.appointment.CompleteAppointment
 import pe.edu.upc.upet.ui.screens.petowner.appointment.PetDetailsAppointment
 import pe.edu.upc.upet.ui.screens.petowner.pet.EditPetDetail
 import pe.edu.upc.upet.ui.screens.petowner.pet.PetDetail
@@ -221,6 +222,13 @@ fun Navigation() {
                 val appointmentId = backStackEntry.arguments?.getString("appointmentId")
                 if (appointmentId != null) {
                     AppointmentDetail(navController, appointmentId.toInt())
+                }
+            }
+            composable(Routes.CompleteAppointment.route) { backStackEntry ->
+                shouldShowBottomBar.value = true
+                val appointmentId = backStackEntry.arguments?.getString("appointmentId")
+                if (appointmentId != null) {
+                    CompleteAppointment(navController, appointmentId.toInt())
                 }
             }
             composable(Routes.AppointmentList.route) {

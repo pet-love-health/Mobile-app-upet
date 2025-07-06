@@ -1,5 +1,6 @@
 package pe.edu.upc.upet.ui.screens.shared.auth.signin
 
+import android.R.string
 import android.util.Log
 import android.util.Patterns
 import androidx.compose.foundation.layout.Arrangement
@@ -25,9 +26,35 @@ import pe.edu.upc.upet.ui.shared.Dialog
 import pe.edu.upc.upet.ui.shared.TextFieldType
 import pe.edu.upc.upet.ui.theme.Blue1
 import pe.edu.upc.upet.ui.theme.BorderPadding
+import java.lang.Double.isNaN
+import kotlin.math.floor
+
 
 @Composable
 fun SignInScreen(authRepository: AuthRepository = AuthRepository(), navigateTo: (String) -> Unit){
+    var captchaQuestion = remember { mutableStateOf("") }
+    var captchaAnswer= remember { mutableStateOf("") }
+    var expectedAnswer= remember { mutableStateOf(0) }
+    var captchaError = remember { mutableStateOf("") }
+    fun generateCaptcha() {
+        val num1 = floor(Math.random() * 10).toInt()
+        val num2 = floor(Math.random() * 10).toInt();
+        captchaQuestion.value = "¿Cuánto es $num1 + $num2?";
+        expectedAnswer.value = num1 + num2;
+        captchaAnswer.value = "";
+        //this.captchaError = null;
+    }
+    fun validateCaptcha(): Boolean {
+        val userAnswer = captchaAnswer.value.toDouble();
+        if (isNaN(userAnswer) || userAnswer.toInt() !== expectedAnswer.value) {
+            captchaError.value = "Respuesta incorrecta, intenta nuevamente";
+            Log.d("error captcha", captchaError.value);
+            generateCaptcha();
+            return false;
+        }
+        captchaError.value = "";
+        return true;
+    }
     Scaffold(modifier = Modifier) { paddingValues->
         val email = remember{
             mutableStateOf("")
@@ -37,6 +64,7 @@ fun SignInScreen(authRepository: AuthRepository = AuthRepository(), navigateTo: 
         }
         val showErrorSnackbar = remember { mutableStateOf(false) }
         val snackbarMessage = remember { mutableStateOf("") }
+        generateCaptcha()
 
         Column(
             modifier = Modifier
@@ -67,6 +95,11 @@ fun SignInScreen(authRepository: AuthRepository = AuthRepository(), navigateTo: 
                         label = "Password",
                         type= TextFieldType.Password
                     )
+                    AuthInputTextField(
+                        input = captchaAnswer,
+                        placeholder = "Enter your answer",
+                        label = captchaQuestion.value,
+                    )
 
                     AuthTextButton("Forgot Password?", arrangement = Arrangement.End,
                         onClickClickableText = {
@@ -84,15 +117,20 @@ fun SignInScreen(authRepository: AuthRepository = AuthRepository(), navigateTo: 
                             snackbarMessage.value = "You must enter your password."
                             showErrorSnackbar.value = true
                         } else {
-                            authRepository.signIn( email.value, password.value) { success ->
-                                if (success) {
-                                    Log.d("SuccesSignIn", "User authenticated")
-                                    navigateTo(Routes.PostRegister.route)
-                                } else {
-                                    snackbarMessage.value = "Invalid credentials."
-                                    showErrorSnackbar.value = true
+                            if(validateCaptcha()){
+                                authRepository.signIn( email.value, password.value) { success ->
+                                    if (success) {
+                                        Log.d("SuccesSignIn", "User authenticated")
+                                        navigateTo(Routes.PostRegister.route)
+                                    } else {
+                                        snackbarMessage.value = "Invalid credentials."
+                                        showErrorSnackbar.value = true
+                                    }
                                 }
                             }
+                            else {snackbarMessage.value == captchaError.value
+                            showErrorSnackbar.value = true}
+
                         }
                     })
                     HorizontalDivider(
@@ -112,4 +150,8 @@ fun SignInScreen(authRepository: AuthRepository = AuthRepository(), navigateTo: 
             }
         }
     }
+
 }
+
+
+
