@@ -28,3 +28,4 @@ val Yellow2 = Color(0xFFFFEB32)
 val Salmon = Color(0x1AF15C5D)
 
 val UpetBackGroundPrimary = Color(0xFFCF8E8E)
+

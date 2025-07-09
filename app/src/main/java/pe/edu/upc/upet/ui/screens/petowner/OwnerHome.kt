@@ -231,14 +231,16 @@ fun RecommendedVetsSection(navController: NavController) {
     var vetClinics: List<VeterinaryClinic> by remember { mutableStateOf(emptyList()) }
 
     LaunchedEffect(key1 = vetClinicRepository) {
-        vetClinicRepository.getAllVeterinaryClinics { vetClinicsList ->
-            vetClinics = vetClinicsList
+        getUserIdAndRoleFromToken()?.first?.let {
+            vetClinicRepository.getFavoriteVeterinaryClinics(it) { vetClinicsList ->
+                vetClinics = vetClinicsList
+            }
         }
     }
 
     Column {
         Text(
-            text = "Recommended Veterinary Clinics",
+            text = "Favorite Clinics",
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
             color = Color.Black,
             modifier = Modifier.padding(16.dp)

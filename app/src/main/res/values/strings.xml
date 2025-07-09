@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">upet</string>
+    <string name="login">Login</string>
+    <string name="app_name_es">upet</string>
+    <string name="login_es">Iniciar Sesión</string>
+
 </resources>

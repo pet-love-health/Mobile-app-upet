@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,7 +35,7 @@ fun AuthHeader(texto: String) {
                 top = 20.dp, bottom = 20.dp
             ).fillMaxWidth(),
             style = TextStyle(
-                color = Blue1,
+                color = MaterialTheme.colorScheme.onSecondary,
                 fontFamily = poppinsFamily,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,

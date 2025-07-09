@@ -95,4 +95,22 @@ class VeterinaryClinicRepository {
             }
         })
     }
+    fun getFavoriteVeterinaryClinics(userId: Int, callback: (Veterinaries)-> Unit){
+        veterinaryClinicService.getFavoriteByUserId(userId).enqueue(object : Callback<VeterinaryClinicResponseList> {
+            override fun onResponse(
+                call: Call<VeterinaryClinicResponseList>,
+                response: Response<VeterinaryClinicResponseList>
+            ) {
+                if (response.isSuccessful){
+                    val veterinaryClinics = response.body()?.map { it.toDomainModel() }?: emptyList()
+                    callback(veterinaryClinics)
+                }else{
+                    Log.e("VeterinaryClinicRepository", "Failed to get veterinary clinics: ${response.errorBody()}")
+                }
+            }
+            override fun onFailure(call: Call<VeterinaryClinicResponseList>, t: Throwable) {
+                Log.e("VeterinaryClinicRepository", "Failed to get veterinary clinics", t)
+            }
+        })
+    }
 }
