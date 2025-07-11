@@ -113,4 +113,20 @@ class VeterinaryClinicRepository {
             }
         })
     }
+    fun toggle(userId: Int, clinicId: Int, callback: (Boolean) -> Unit) {
+        veterinaryClinicService.toggle(userId, clinicId).enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                if (response.isSuccessful) {
+                    callback(true)
+                } else {
+                    Log.e("VeterinaryClinicRepository", "Failed to add favorite veterinary clinic: ${response.errorBody()}")
+                    callback(false)
+                }
+            }
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                Log.e("VeterinaryClinicRepository", "Failed to add favorite veterinary clinic", t)
+                callback(false)
+            }
+        })
+    }
 }

@@ -25,4 +25,7 @@ interface VeterinaryClinicService {
     fun generatePassword(
         @Path("clinic_id") clinicId: Int
     ): Call<String>
+
+    @POST("favoriteClinics/userId/{user_id}/clinicId/{clinic_id}")
+    fun toggle(@Path("user_id") userId: Int, @Path("clinic_id") clinicId: Int): Call<Boolean>
 }

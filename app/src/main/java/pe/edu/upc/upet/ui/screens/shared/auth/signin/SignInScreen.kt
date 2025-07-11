@@ -51,8 +51,11 @@ import java.lang.Double.isNaN
 import kotlin.math.floor
 
 
+
 @Composable
 fun SignInScreen(authRepository: AuthRepository = AuthRepository(), navigateTo: (String) -> Unit){
+
+
     var captchaQuestion = remember { mutableStateOf("") }
     var captchaAnswer= remember { mutableStateOf("") }
     var expectedAnswer= remember { mutableStateOf(0) }
@@ -255,7 +258,7 @@ fun SignInScreen(authRepository: AuthRepository = AuthRepository(), navigateTo: 
                             },
                         )
                     } else {
-                        AuthHeader(texto = stringResource(id= R.string.login_es))
+                        AuthHeader(texto = stringResource(id= R.string.login))
                         HorizontalDivider(
                             modifier = Modifier.padding(BorderPadding),
                             thickness = 30.dp,

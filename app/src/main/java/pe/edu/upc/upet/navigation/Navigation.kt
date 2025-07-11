@@ -1,6 +1,5 @@
 package pe.edu.upc.upet.navigation
 
-import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -54,7 +53,8 @@ import pe.edu.upc.upet.ui.screens.shared.auth.recovery.SendEmailScreen
 import pe.edu.upc.upet.ui.screens.shared.auth.signin.SignInScreen
 import pe.edu.upc.upet.ui.screens.shared.auth.signup.SignUpScreen
 import pe.edu.upc.upet.ui.screens.shared.medicalHistory.PetMedicalInformation
-import pe.edu.upc.upet.ui.screens.shared.notification.CreateNotification
+import pe.edu.upc.upet.ui.screens.shared.notification.CreateReminder
+import pe.edu.upc.upet.ui.screens.shared.notification.NotificationList
 import pe.edu.upc.upet.ui.screens.vet.GeneratePassword
 import pe.edu.upc.upet.ui.screens.vet.VetAppointmentDetail
 import pe.edu.upc.upet.ui.screens.vet.VetAppointments
@@ -284,7 +284,12 @@ fun Navigation() {
 
             composable(Routes.CreateNotification.route){
                 shouldShowBottomBar.value = true
-                CreateNotification(navController)
+                NotificationList(navController)
+            }
+
+            composable(Routes.CreateReminder.route){
+                shouldShowBottomBar.value = true
+                CreateReminder(navController)
             }
 
 

@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Star
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.filled.WatchLater
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -50,10 +52,12 @@ import pe.edu.upc.upet.feature_vetClinic.data.repository.VeterinaryClinicReposit
 import pe.edu.upc.upet.feature_vetClinic.domain.VeterinaryClinic
 import pe.edu.upc.upet.navigation.Routes
 import pe.edu.upc.upet.ui.screens.petowner.pet.ImageRectangle
+import pe.edu.upc.upet.ui.shared.Dialog
 import pe.edu.upc.upet.ui.shared.TextNormal
 import pe.edu.upc.upet.ui.shared.TextSemiBold
 import pe.edu.upc.upet.ui.shared.TopBar
 import pe.edu.upc.upet.ui.theme.Blue1
+import pe.edu.upc.upet.utils.TokenManager
 import java.util.Locale
 
 @Composable
@@ -64,7 +68,7 @@ fun OwnerClinicDetails(navController: NavHostController, vetClinicId: Int) {
     var vets by remember { mutableStateOf<List<Vet>?>(null) }
     val context = LocalContext.current
     var streetName by remember { mutableStateOf("Loading...") }
-
+    val (userId,_,_) = TokenManager.getUserIdAndRoleFromToken() ?: error("Error obteniendo el userId desde el token")
     LaunchedEffect(key1 = vetClinicId) {
         vetClinicRepository.getVeterinaryClinicById(vetClinicId) { clinic ->
             vetClinic = clinic
@@ -99,7 +103,8 @@ fun OwnerClinicDetails(navController: NavHostController, vetClinicId: Int) {
                 ) {
                     ImageRectangle(imageUrl = veterinaryClinic.image_url)
 
-                    ClinicNameAndRating(name = veterinaryClinic.name)
+                    ClinicNameAndRating(name = veterinaryClinic.name,
+                        ownerId = userId, clinicId = veterinaryClinic.id, vetClinicRepository)
 
                     ClinicInfo(
                         phoneNumber = "987654321",
@@ -124,7 +129,9 @@ fun OwnerClinicDetails(navController: NavHostController, vetClinicId: Int) {
 }
 
 @Composable
-fun ClinicNameAndRating(name: String) {
+fun ClinicNameAndRating(name: String, ownerId: Int, clinicId: Int, veterinaryClinicRepository: VeterinaryClinicRepository) {
+    val snackbarMessage = remember { mutableStateOf("") }
+    val showErrorSnackbar = remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -146,7 +153,29 @@ fun ClinicNameAndRating(name: String) {
             )
             Text(text = "4.5")
         }
+        IconButton(
+            onClick = {
+                veterinaryClinicRepository.toggle(userId = ownerId, clinicId = clinicId) { success ->
+                    if (success) {
+
+                        snackbarMessage.value = "You must enter your email."
+
+                        showErrorSnackbar.value = true
+                    } else {
+                        // Handle failure, e.g., show an error message
+                    }
+                }
+            },
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Favorite,
+                contentDescription = "Call",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
     }
+    Dialog(message = (snackbarMessage.value), showError = showErrorSnackbar )
 }
 
 @Composable

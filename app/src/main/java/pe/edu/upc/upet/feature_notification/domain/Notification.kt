@@ -4,8 +4,8 @@ import java.time.LocalDateTime
 
 data class Notification (
     val id: Int,
-    val userId: Int,
+    val title: String,
     val type: String,
     val message: String,
-    val datetime: LocalDateTime
+    val datetime: String
 )

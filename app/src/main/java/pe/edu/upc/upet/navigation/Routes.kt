@@ -60,6 +60,7 @@ sealed class Routes(val route: String) {
     data object PetList : Routes("pet_list")
     data object RegisterPet : Routes("register_pet")
     data object CreateNotification : Routes("create_notification")
+    data object CreateReminder : Routes("create_reminder")
 
     // Vet views ------------------------------------
 
